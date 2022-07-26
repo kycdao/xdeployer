@@ -141,11 +141,18 @@ task(
           }
 
           try {
+            const networkConf =
+              hre.config.networks[hre.config.xdeploy.networks[i]];
+            const opts: any = { gasLimit: hre.config.xdeploy.gasLimit };
+            if (networkConf && networkConf.gasPrice) {
+              opts.gasPrice = networkConf.gasPrice;
+            }
+
             createReceipt[i] = await create2Deployer[i].deploy(
               AMOUNT,
               hre.ethers.utils.id(hre.config.xdeploy.salt),
               initcode.data,
-              { gasLimit: hre.config.xdeploy.gasLimit }
+              opts
             );
 
             chainId = createReceipt[i].chainId;
