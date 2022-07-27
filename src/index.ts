@@ -144,7 +144,7 @@ task(
             const networkConf =
               hre.config.networks[hre.config.xdeploy.networks[i]];
             const opts: any = { gasLimit: hre.config.xdeploy.gasLimit };
-            if (networkConf && networkConf.gasPrice) {
+            if (networkConf && networkConf.gasPrice != 'auto') {
               opts.gasPrice = networkConf.gasPrice;
             }
 
