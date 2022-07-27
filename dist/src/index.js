@@ -106,7 +106,7 @@ const path_1 = __importDefault(require("path"));
                     try {
                         const networkConf = hre.config.networks[hre.config.xdeploy.networks[i]];
                         const opts = { gasLimit: hre.config.xdeploy.gasLimit };
-                        if (networkConf && networkConf.gasPrice) {
+                        if (networkConf && networkConf.gasPrice != 'auto') {
                             opts.gasPrice = networkConf.gasPrice;
                         }
                         createReceipt[i] = await create2Deployer[i].deploy(constants_1.AMOUNT, hre.ethers.utils.id(hre.config.xdeploy.salt), initcode.data, opts);
