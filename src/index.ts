@@ -144,9 +144,17 @@ task(
             const networkConf =
               hre.config.networks[hre.config.xdeploy.networks[i]];
             const opts: any = { gasLimit: hre.config.xdeploy.gasLimit };
+
+            console.log(`network is: ${hre.config.xdeploy.networks[i]}`)
+            console.log('networkConf follows:')
+            console.log(networkConf)
+
             if (networkConf && networkConf.gasPrice != 'auto') {
               opts.gasPrice = networkConf.gasPrice;
             }
+
+            console.log('opts follows:')
+            console.log(opts)
 
             createReceipt[i] = await create2Deployer[i].deploy(
               AMOUNT,
