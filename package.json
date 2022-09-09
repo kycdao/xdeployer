@@ -40,7 +40,6 @@
     "README.md"
   ],
   "devDependencies": {
-    "@celo-tools/celo-ethers-wrapper": "^0.3.0",
     "@nomiclabs/hardhat-ethers": "^2.1.0",
     "@openzeppelin/contracts": "^4.7.1",
     "@types/chai": "^4.3.1",
@@ -62,6 +61,7 @@
     "undici": "^5.8.0"
   },
   "peerDependencies": {
+    "@celo-tools/celo-ethers-wrapper": "^0.3.0",
     "@nomiclabs/hardhat-ethers": "^2.1.0",
     "@openzeppelin/contracts": "^4.7.1",
     "hardhat": "^2.10.1"
