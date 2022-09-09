@@ -83,11 +83,12 @@ const path_1 = __importDefault(require("path"));
                 hre.config.xdeploy.networks[i] === "alfajores" ||
                 hre.config.xdeploy.networks[i] === "baklava") {
                 providers[i] = new celo_ethers_wrapper_1.CeloProvider(hre.config.xdeploy.rpcUrls[i]);
+                wallets[i] = new celo_ethers_wrapper_1.CeloWallet(hre.config.xdeploy.signer, providers[i]);
             }
             else {
                 providers[i] = new hre.ethers.providers.JsonRpcProvider(hre.config.xdeploy.rpcUrls[i]);
+                wallets[i] = new hre.ethers.Wallet(hre.config.xdeploy.signer, providers[i]);
             }
-            wallets[i] = new hre.ethers.Wallet(hre.config.xdeploy.signer, providers[i]);
             signers[i] = wallets[i].connect(providers[i]);
             if (hre.config.xdeploy.networks[i] !== "hardhat" &&
                 hre.config.xdeploy.networks[i] !== "localhost") {
