@@ -36,6 +36,7 @@ require("./type-extensions");
 const Create2Deployer_json_1 = __importDefault(require("./abi/Create2Deployer.json"));
 const plugins_1 = require("hardhat/plugins");
 require("@nomiclabs/hardhat-ethers");
+const celo_ethers_wrapper_1 = require("@celo-tools/celo-ethers-wrapper");
 const fs = __importStar(require("fs"));
 const path_1 = __importDefault(require("path"));
 (0, config_1.extendConfig)(config_2.xdeployConfigExtender);
@@ -78,7 +79,14 @@ const path_1 = __importDefault(require("path"));
             initcode = contract.getDeployTransaction();
         }
         for (let i = 0; i < hre.config.xdeploy.rpcUrls.length; i++) {
-            providers[i] = new hre.ethers.providers.JsonRpcProvider(hre.config.xdeploy.rpcUrls[i]);
+            if (hre.config.xdeploy.networks[i] === "celo" ||
+                hre.config.xdeploy.networks[i] === "alfajores" ||
+                hre.config.xdeploy.networks[i] === "baklava") {
+                providers[i] = new celo_ethers_wrapper_1.CeloProvider(hre.config.xdeploy.rpcUrls[i]);
+            }
+            else {
+                providers[i] = new hre.ethers.providers.JsonRpcProvider(hre.config.xdeploy.rpcUrls[i]);
+            }
             wallets[i] = new hre.ethers.Wallet(hre.config.xdeploy.signer, providers[i]);
             signers[i] = wallets[i].connect(providers[i]);
             if (hre.config.xdeploy.networks[i] !== "hardhat" &&
