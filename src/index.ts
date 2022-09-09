@@ -20,7 +20,7 @@ import abi from "./abi/Create2Deployer.json";
 
 import { NomicLabsHardhatPluginError } from "hardhat/plugins";
 import "@nomiclabs/hardhat-ethers";
-import { CeloProvider } from '@celo-tools/celo-ethers-wrapper';
+import { CeloProvider, CeloWallet } from '@celo-tools/celo-ethers-wrapper';
 import * as fs from "fs";
 import path from "path";
 
@@ -93,16 +93,16 @@ task(
           hre.config.xdeploy.networks[i] === "alfajores" || 
           hre.config.xdeploy.networks[i] === "baklava") {
         providers[i] = new CeloProvider(hre.config.xdeploy.rpcUrls[i]);
+        wallets[i] = new CeloWallet(hre.config.xdeploy.signer, providers[i]);
       } else {
         providers[i] = new hre.ethers.providers.JsonRpcProvider(
           hre.config.xdeploy.rpcUrls[i]
         );
+        wallets[i] = new hre.ethers.Wallet(
+          hre.config.xdeploy.signer,
+          providers[i]
+        );        
       }
-
-      wallets[i] = new hre.ethers.Wallet(
-        hre.config.xdeploy.signer,
-        providers[i]
-      );
 
       signers[i] = wallets[i].connect(providers[i]);
 
