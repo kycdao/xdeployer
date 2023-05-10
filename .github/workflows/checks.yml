@@ -1,4 +1,4 @@
-name: 🕵️‍♂️ Test xdeploy
+name: 👮‍♂️ Sanity checks
 
 on: [push, pull_request]
 
@@ -7,7 +7,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  tests:
+  lint:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -36,9 +36,25 @@ jobs:
       - name: Install npm project with a clean slate
         run: npm ci --prefer-offline
 
-      - name: Run tests
-        run: npm run test
-        env:
-          XDEPLOYER_TEST_ACCOUNT: ${{ secrets.XDEPLOYER_TEST_ACCOUNT }}
-          ETH_GOERLI_TESTNET_URL: ${{ secrets.ETH_GOERLI_TESTNET_URL }}
-          ETH_SEPOLIA_TESTNET_URL: ${{ secrets.ETH_SEPOLIA_TESTNET_URL }}
+      - name: Prettier
+        run: npm run prettier:check
+
+      - name: Lint
+        run: npm run lint
+
+  codespell:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os:
+          - ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Run codespell
+        uses: codespell-project/actions-codespell@v1.0
+        with:
+          check_filenames: true
+          skip: ./.git,package-lock.json

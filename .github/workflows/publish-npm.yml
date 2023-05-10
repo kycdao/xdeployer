@@ -1,13 +1,11 @@
-name: 👮‍♂️ Lint
+name: 📦 Publish xdeployer to npm
 
-on: [push, pull_request]
-
-concurrency:
-  group: ${{github.workflow}}-${{github.ref}}
-  cancel-in-progress: true
+on:
+  release:
+    types: [published]
 
 jobs:
-  unit:
+  publish:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -27,16 +25,17 @@ jobs:
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-node-
-      - name: Use Node.js ${{ matrix.node_version }}
+
+      - name: Setup .npmrc file to publish to npm
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node_version }}
+          registry-url: "https://registry.npmjs.org"
 
       - name: Install npm project with a clean slate
         run: npm ci --prefer-offline
 
-      - name: Prettier
-        run: npm run prettier:check
-
-      - name: Lint
-        run: npm run lint
+      - name: Publish to npm
+        run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

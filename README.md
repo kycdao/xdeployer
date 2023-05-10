@@ -2,9 +2,11 @@
 
 [![Test xdeploy](https://github.com/pcaversaccio/xdeployer/actions/workflows/test.yml/badge.svg)](https://github.com/pcaversaccio/xdeployer/actions/workflows/test.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
-[![NPM Package](https://img.shields.io/npm/v/xdeployer.svg?style=flat-square)](https://www.npmjs.com/package/xdeployer)
+[![npm package](https://img.shields.io/npm/v/xdeployer.svg)](https://www.npmjs.com/package/xdeployer)
 
 [Hardhat](https://hardhat.org) plugin to deploy your smart contracts across multiple Ethereum Virtual Machine (EVM) chains with the same deterministic address.
+
+> It is pronounced _cross_-deployer.
 
 ## What
 
@@ -103,8 +105,8 @@ xdeploy: {
   constructorArgsPath: "./deploy-args.ts",
   salt: "WAGMI",
   signer: process.env.PRIVATE_KEY,
-  networks: ["hardhat", "rinkeby", "kovan"],
-  rpcUrls: ["hardhat", process.env.RINKEBY_URL, process.env.KOVAN_URL],
+  networks: ["hardhat", "goerli", "sepolia"],
+  rpcUrls: ["hardhat", process.env.ETH_GOERLI_TESTNET_URL, process.env.ETH_SEPOLIA_TESTNET_URL],
   gasLimit: 1.2 * 10 ** 6,
 },
 ```
@@ -124,24 +126,34 @@ The current available networks are:
   - `optimismTestnet`
   - `arbitrumTestnet`
   - `mumbai`
+  - `polygonZkEVMTestnet`
   - `hecoTestnet`
   - `fantomTestnet`
   - `fuji`
   - `sokol`
+  - `chiado`
   - `moonbaseAlpha`
   - `alfajores`
   - `auroraTestnet`
   - `harmonyTestnet`
+  - `autobahnTestnet`
   - `spark`
   - `cronosTestnet`
   - `evmosTestnet`
   - `bobaTestnet`
+  - `cantoTestnet`
+  - `baseTestnet`
+  - `mantleTestnet`
+  - `scrollTestnet`
+  - `lineaTestnet`
 - **EVM-Based Production Networks:**
   - `ethMain`
   - `bscMain`
   - `optimismMain`
   - `arbitrumMain`
+  - `arbitrumNova`
   - `polygon`
+  - `polygonZkEVMMain`
   - `hecoMain`
   - `fantomMain`
   - `avalanche`
@@ -156,8 +168,9 @@ The current available networks are:
   - `cronos`
   - `evmosMain`
   - `bobaMain`
+  - `cantoMain`
 
-> Note that you must ensure that your deployment account has sufficient funds on **all** target networks. In addition, please be aware that `gnosis` refers to the previously known _xDai_ chain. Eventually, whilst this plugin supports Optimism Kovan and Optimism Goerli via `optimismTestnet`, it will output the resulting block explorer links in the terminal of Optimism Goerli, as Optimism Kovan is deprecated (you can read the announcement [here](https://dev.optimism.io/kovan-to-goerli)).
+> Note that you must ensure that your deployment account has sufficient funds on **all** target networks. In addition, please be aware that `gnosis` refers to the previously known _xDai_ chain. Eventually, whilst this plugin supports Optimism Kovan and Optimism Goerli via `optimismTestnet`, and Arbitrum Rinkeby and Arbitrum Goerli via `arbitrumTestnet`, it will output the resulting block explorer links in the terminal of Optimism Goerli and Arbitrum Goerli, as Optimism Kovan and Arbitrum Kovan are deprecated.
 
 ### Local Deployment
 
@@ -165,16 +178,14 @@ If you also want to test deploy your smart contracts on `"hardhat"` or `"localho
 
 ```solidity
 // SPDX-License-Identifier: MIT
+pragma solidity ^0.8.19;
 
-pragma solidity ^0.8.9;
-
-import "xdeployer/src/contracts/Create2Deployer.sol";
+import { Create2Deployer } from "xdeployer/src/contracts/Create2Deployer.sol";
 
 contract Create2DeployerLocal is Create2Deployer {}
-
 ```
 
-> For this kind of deployment, you must set the Solidity version in the `hardhat.config.js` or `hardhat.config.ts` file to `0.8.9`.
+> For this kind of deployment, you must set the Solidity version in the `hardhat.config.js` or `hardhat.config.ts` file to `0.8.19` or higher.
 
 The RPC URL for `hardhat` is simply `hardhat`, while for `localhost` you must first run `npx hardhat node`, which defaults to `http://127.0.0.1:8545`. Note that `localhost` in Node.js v17 favours IPv6, which means that you need to configure the network endpoint of `localhost` in `hardhat.config.js` or `hardhat.config.ts` like this:
 
@@ -201,7 +212,7 @@ const data = [
 export { data };
 ```
 
-> BigInt literals (e.g. `100000000000000000000n`) can be used for the constructor arguments if you set `target: ES2020` in your `tsconfig.json` file. See also [here](https://github.com/pcaversaccio/xdeployer/blob/main/tsconfig.json) for an example.
+> BigInt literals (e.g. `100000000000000000000n`) can be used for the constructor arguments if you set `target: ES2020` in your `tsconfig.json` file. See also [here](./tsconfig.json) for an example.
 
 If you are using common JavaScript:
 
@@ -239,7 +250,7 @@ Using the `CREATE2` EVM opcode always allows to redeploy a new smart contract to
 
 It is important to note that the `msg.sender` of the contract creation transaction is the helper smart contract [`Create2Deployer`](https://github.com/pcaversaccio/create2deployer) with address `0x13b0D85CcB8bf860b6b79AF3029fCA081AE9beF2`. If you are relying on common smart contract libraries such as [OpenZeppelin](https://github.com/OpenZeppelin/openzeppelin-contracts) for your smart contract, which set certain constructor arguments to `msg.sender` (e.g. `owner`), you will need to change these arguments to `tx.origin` so that they are set to your deployer's EOA address. For another workaround, see [here](https://github.com/pcaversaccio/xdeployer/discussions/18).
 
-> **Caveat:** Please familiarise yourself with the security considerations concerning `tx.origin`. You can find more information about it, e.g. [here](https://docs.soliditylang.org/en/v0.8.11/security-considerations.html?highlight=tx.origin#tx-origin).
+> **Caveat:** Please familiarise yourself with the security considerations concerning `tx.origin`. You can find more information about it, e.g. [here](https://docs.soliditylang.org/en/latest/security-considerations.html#tx-origin).
 
 ## Donation
 

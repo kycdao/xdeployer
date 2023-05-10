@@ -1,4 +1,7 @@
 {
+  "baseBranches": ["main"],
+  "labels": ["dependencies 🔁"],
+  "assignees": ["pcaversaccio"],
   "separateMajorMinor": false,
   "extends": [
     ":preserveSemverRanges",

@@ -167,33 +167,18 @@ task(
 
             createReceipt[i] = await createReceipt[i].wait();
 
-            if (hre.config.xdeploy.networks[i] == "autobahn") {
-              result[i] = {
-                network: hre.config.xdeploy.networks[i],
-                chainId: chainId,
-                contract: hre.config.xdeploy.contract,
-                txHash: createReceipt[i].transactionHash,
-                txHashLink: `${explorers[idx]}transaction/${createReceipt[i].transactionHash}`,
-                address: computedContractAddress,
-                addressLink: `${explorers[idx]}address/${computedContractAddress}`,
-                receipt: createReceipt[i],
-                deployed: true,
-                error: undefined,
-              };
-            } else {
-              result[i] = {
-                network: hre.config.xdeploy.networks[i],
-                chainId: chainId,
-                contract: hre.config.xdeploy.contract,
-                txHash: createReceipt[i].transactionHash,
-                txHashLink: `${explorers[idx]}tx/${createReceipt[i].transactionHash}`,
-                address: computedContractAddress,
-                addressLink: `${explorers[idx]}address/${computedContractAddress}`,
-                receipt: createReceipt[i],
-                deployed: true,
-                error: undefined,
-              };
-            }
+            result[i] = {
+              network: hre.config.xdeploy.networks[i],
+              chainId: chainId,
+              contract: hre.config.xdeploy.contract,
+              txHash: createReceipt[i].transactionHash,
+              txHashLink: `${explorers[idx]}tx/${createReceipt[i].transactionHash}`,
+              address: computedContractAddress,
+              addressLink: `${explorers[idx]}address/${computedContractAddress}`,
+              receipt: createReceipt[i],
+              deployed: true,
+              error: undefined,
+            };
 
             if (!fs.existsSync(dir)) {
               fs.mkdirSync(dir);
@@ -413,7 +398,7 @@ subtask(TASK_VERIFY_NETWORK_ARGUMENTS).setAction(async (_, hre) => {
     throw new NomicLabsHardhatPluginError(
       PLUGIN_NAME,
       `Please provide at least one deployment network via the hardhat config.
-        E.g.: { [...], xdeploy: { networks: ["rinkeby", "kovan"] }, [...] }
+        E.g.: { [...], xdeploy: { networks: ["goerli", "sepolia"] }, [...] }
         The current supported networks are ${networks}.`
     );
   }
